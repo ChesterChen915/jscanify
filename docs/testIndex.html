@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebRTC測試</title>
+    
+    <style>
+
+    </style>
+    
+    <script>
+    var file = undefined;
+    var reader = undefined;
+    $(document).ready(init);
+    function init(){	
+		file = $("#fileInput")[0]; //<input type="file">
+		$("#fileInput").change(fileChangeHandler);
+		reader = new FileReader();
+		$(reader).on("load", loadendHandler);
+    }
+    
+    function fileChangeHandler(){
+		if(file.files.length > 0){
+	        var selectedFile = file.files[0];
+	        var message ;
+	        $("#imageContainer").html(message);
+	        reader.readAsDataURL(selectedFile);
+		}else{
+			$("#imageContainer").html("No file selected!");
+			$("#preview").fadeOut(0);
+		}
+       
+    }
+    
+    function loadendHandler(){
+        $("#preview").attr("src", reader.result);
+        $("#preview").fadeIn(500);
+    }
+    </script>
+</head>
+
+<body>
+    <div>
+        <input type="file" id="fileInput" value="" accept="image/png,image/jpeg">
+    </div>
+    <div id="imageContainer">
+       </div>  
+        <img id="preview" alt="">
+   
+</body>
+
+</html>

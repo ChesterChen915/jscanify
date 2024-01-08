@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>照片剪裁測試工具</title>
+
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        * {
+            font-family: system-ui;
+        }
+
+        h1, h2, h3 {
+            font-weight: 400;
+        }
+
+        video {
+            max-height: 400px;
+            max-width: 400px;
+        }
+
+        #results > div {
+            margin: 20px;
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+<div style="padding: 30px">
+    <h1 style="margin: 0">測試剪裁工具</h1>
+
+    <h3 style="margin-bottom: 10px">使用相機：</h3>
+    <video id="video" playsinline autoplay></video>
+
+    <div id="result" style="margin-top: 50px; display: none">
+        <h2 style="margin-bottom: 0; margin-left: 20px">結果</h2>
+        <div style="display: flex; flex-wrap: wrap" id="results">
+            <div>
+                <h3>原始影像</h3>
+                <canvas id="origCanvas"></canvas>
+            </div>
+            <div id="highlighted">
+                <h3>標示邊界的影像</h3>
+                <canvas id="highlightedCanvas"></canvas>
+            </div>
+            <div id="extracted">
+                <h3>裁剪後的影像</h3>
+                <canvas id="extractedCanvas"></canvas>
+            </div>
+            <div id="cornerPts">
+                <h3>Corner Points</h3>
+                <pre style="font-family: monospace"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://docs.opencv.org/4.7.0/opencv.js" async></script>
+<!-- warning: loading OpenCV can take some time. Load asynchronously -->
+<script src="https://cdn.jsdelivr.net/gh/ColonelParrot/jscanify@master/src/jscanify.min.js"></script>
+
+<script>
+    window.addEventListener("load", function () {
+        const scanner = new jscanify();
+        const video = document.getElementById("video");
+        const origCanvas = document.getElementById("origCanvas");
+        const highlightedCanvas = document.getElementById("highlightedCanvas");
+        const extractedCanvas = document.getElementById("extractedCanvas");
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream;
+
+                const track = stream.getVideoTracks()[0];
+                const imageCapture = new ImageCapture(track);
+
+                fileInput.addEventListener("change", function (e) {
+                    if (e.target.files.length) {
+                        const image = e.target.files[0];
+                        const orig = new Image();
+                        orig.src = URL.createObjectURL(image);
+                        clearData();
+                        result.style.display = "block";
+
+                        orig.onload = function () {
+                            origCanvas.width = orig.width;
+                            origCanvas.height = orig.height;
+                            origCanvas.getContext("2d").drawImage(orig, 0, 0, orig.width, orig.height);
+
+                            const highlightedCanvasResult = scanner.highlightPaper(orig);
+                            highlightedCanvas.width = highlightedCanvasResult.width;
+                            highlightedCanvas.height = highlightedCanvasResult.height;
+                            highlightedCanvas.getContext("2d").drawImage(highlightedCanvasResult, 0, 0);
+
+                            const extractedCanvasResult = scanner.extractPaper(orig, 772, 1000);
+                            extractedCanvas.width = extractedCanvasResult.width;
+                            extractedCanvas.height = extractedCanvasResult.height;
+                            extractedCanvas.getContext("2d").drawImage(extractedCanvasResult, 0, 0);
+
+                            imageCapture.grabFrame()
+                                .then(function (imageBitmap) {
+                                    const contour = scanner.findPaperContour(cv.imread(imageBitmap));
+                                    const cornerPoints = scanner.getCornerPoints(contour);
+                                    cornerPts.querySelector("pre").textContent = JSON.stringify(cornerPoints, null, 4);
+                                })
+                                .catch(function (error) {
+                                    console.error('Error grabbing frame:', error);
+                                });
+                        };
+                    }
+                });
+            })
+            .catch(function (error) {
+                console.error('Error accessing camera:', error);
+            });
+    });
+
+    function clearData() {
+        cornerPts.querySelector("pre").textContent = "";
+    }
+</script>
+</body>
+</html>
