@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>照片剪裁測試工具</title>
 
     <style>
@@ -22,6 +23,11 @@
             max-height: 600px;
             max-width: 600px;
         }
+
+        /* 新增的樣式，用於定位下載按鈕 */
+        #downloadButtonContainer {
+            margin-top: 10px; /* 調整上邊距，使下載按鈕與 highlightedCanvas 之間有些間距 */
+        }
     </style>
 </head>
 
@@ -37,12 +43,11 @@
         <canvas id="highlightedCanvas"></canvas>
         <!-- highlighted image -->
 
-        
-    </div>
-    
-    <div>
-        <!-- 新增的下載按鈕，初始時設置為不顯示 -->
-        <button id="downloadButton" style="display: none;" onclick="downloadHighlightedCanvas()">下載 Highlighted 圖片</button>
+        <!-- 下載按鈕的容器 -->
+        <div id="downloadButtonContainer">
+            <!-- 新增的下載按鈕，初始時設置為不顯示 -->
+            <button id="downloadButton" style="display: none;" onclick="downloadHighlightedCanvas()" ontouchend="downloadHighlightedCanvas()">下載 Highlighted 圖片</button>
+        </div>
     </div>
 
     <script src="https://docs.opencv.org/4.7.0/opencv.js" async></script>
@@ -107,4 +112,5 @@
         }
     </script>
 </body>
+
 </html>
