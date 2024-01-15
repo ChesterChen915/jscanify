@@ -20,8 +20,8 @@
         }
 
         canvas {
-            max-height: 600px;
-            max-width: 600px;
+            max-height: 400px;
+            max-width: 400px;
         }
 
         /* 新增的樣式，用於定位下載按鈕 */
@@ -38,19 +38,19 @@
         <!-- file input for capturing images -->
         <input type="file" accept="image/*" capture="camera" id="fileInput">
 
-        <!-- 第一張圖片，上傳的原始圖片 -->
+        <!-- 第一張圖片，拍照或上傳的原始圖片 -->
         <canvas id="originalCanvas"></canvas>
 
-        <!-- 第二張圖片，上傳圖片並標示文件邊界 -->
+        <!-- 第二張圖片，拍照或上傳的圖片並標示文件邊界 -->
         <canvas id="highlightedCanvas"></canvas>
 
         <!-- 第三張圖片，標示的範圍 -->
-        <canvas id="boundingBoxCanvas"></canvas>
+        <canvas id="extractedCanvas"></canvas>
 
         <!-- 下載按鈕的容器 -->
         <div id="downloadButtonContainer">
-            <!-- 新增的下載按鈕，初始時設置為不顯示 -->
-            <button id="downloadButton" style="display: none;" onclick="downloadBoundingBoxCanvas()" ontouchend="downloadBoundingBoxCanvas()">下載 Highlighted 圖片</button>
+            <!-- 下載按鈕，初始時設置為不顯示 -->
+            <button id="downloadButton" style="display: none;" onclick="downloadExtractedCanvas()" ontouchend="downloadExtractedCanvas()">下載剪裁過後的圖片</button>
         </div>
     </div>
 
@@ -61,13 +61,14 @@
     <script>
         window.addEventListener("load", function () {
             const scanner = new jscanify();
+            const paperWidth = 800;
+            const paperHeight = 1000;
             const originalCanvas = document.getElementById("originalCanvas");
             const highlightedCanvas = document.getElementById("highlightedCanvas");
-            const boundingBoxCanvas = document.getElementById("boundingBoxCanvas");
+            const extractedCanvas = document.getElementById("extractedCanvas");
 
             const originalCanvasCtx = originalCanvas.getContext("2d");
             const highlightedCanvasCtx = highlightedCanvas.getContext("2d");
-            const boundingBoxCanvasCtx = boundingBoxCanvas.getContext("2d");
 
             const fileInput = document.getElementById("fileInput");
             const downloadButton = document.getElementById("downloadButton");
@@ -96,16 +97,11 @@
                             const resultCanvas = scanner.highlightPaper(originalCanvas);
                             highlightedCanvasCtx.drawImage(resultCanvas, 0, 0);
 
-                            // Specify the crop region (adjust the values as needed)
-                            const cropX = 100;  // Adjust the starting X-coordinate
-                            const cropY = 50;   // Adjust the starting Y-coordinate
-                            const cropWidth = 300;  // Adjust the width
-                            const cropHeight = 200; // Adjust the height
-
-                            // Draw the cropped region from highlightedCanvas onto boundingBoxCanvas
-                            boundingBoxCanvas.width = cropWidth;
-                            boundingBoxCanvas.height = cropHeight;
-                            boundingBoxCanvasCtx.drawImage(highlightedCanvas, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+                            // Draw the cropped region from highlightedCanvas onto extractedCanvas
+                            const extractedCanvasResult = scanner.extractPaper(image, paperWidth, paperHeight);
+                            extractedCanvas.width = extractedCanvasResult.width; // 新增這行
+                            extractedCanvas.height = extractedCanvasResult.height; // 新增這行
+                            extractedCanvas.getContext("2d").drawImage(extractedCanvasResult, 0, 0); // 修改這行                   
 
                             // 顯示下載按鈕
                             downloadButton.style.display = "block";
@@ -116,10 +112,10 @@
             });
         });
 
-         // 新增的下載函數
-         function downloadBoundingBoxCanvas() {
-            const boundingBoxCanvas = document.getElementById("boundingBoxCanvas");
-            const dataUrl = boundingBoxCanvas.toDataURL("image/png");
+        // 新增的下載函數
+        function downloadExtractedCanvas() {
+            const extractedCanvas = document.getElementById("extractedCanvas");
+            const dataUrl = extractedCanvas.toDataURL("image/png");
             
             // 創建一個a標籤用於下載
             const a = document.createElement("a");
