@@ -24,7 +24,7 @@
             max-width: 400px;
         }
 
-        /* 新增的樣式，用於定位下載按鈕 */
+        /* 用於定位下載按鈕 */
         #downloadButtonContainer {
             margin-top: 10px; /* 調整上邊距，使下載按鈕與 highlightedCanvas 之間有些間距 */
         }
@@ -120,8 +120,18 @@
             
             // 創建一個a標籤用於下載
             const a = document.createElement("a");
+            // 使用當下日期時間作為檔案名稱
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`;
+            
             a.href = dataUrl;
-            a.download = "cropped_image.png";
+            a.download = `${timestamp}.png`;
             
             // 模擬點擊下載
             document.body.appendChild(a);
