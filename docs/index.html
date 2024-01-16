@@ -113,13 +113,23 @@
             });
         });
 
-        // 下載已裁切且梯形修正圖片的方法
+            // 下載已裁切且梯形修正圖片的方法
         function downloadExtractedCanvas() {
             const extractedCanvas = document.getElementById("extractedCanvas");
             const dataUrl = extractedCanvas.toDataURL("image/png");
-            
-            // 創建一個a標籤用於下載
+
+            // 將 dataURL 轉換為 Blob
+            const blob = dataURLtoBlob(dataUrl);
+
+            // 創建 Blob URL
+            const blobUrl = URL.createObjectURL(blob);
+
+            // 創建一個 a 標籤用於下載
             const a = document.createElement("a");
+
+            // 指定 Blob URL 給 a 的 href
+            a.href = blobUrl;
+
             // 使用當下日期時間作為檔案名稱
             const now = new Date();
             const year = now.getFullYear();
@@ -129,15 +139,34 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`;
-            
-            a.href = dataUrl;
+
+            // 將 Blob URL 分配給 a 的 download 屬性（省略掉 download 屬性也是一個選擇）
             a.download = `${timestamp}.png`;
-            
+
             // 模擬點擊下載
             document.body.appendChild(a);
             a.click();
+
+            // 釋放 Blob URL
+            URL.revokeObjectURL(blobUrl);
+
+            // 移除 a 元素
             document.body.removeChild(a);
         }
+
+        // 將 dataURL 轉換為 Blob
+        function dataURLtoBlob(dataUrl) {
+            const arr = dataUrl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        }
+
     </script>
 </body>
 
