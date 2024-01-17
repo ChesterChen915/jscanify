@@ -33,7 +33,7 @@
 
 <body>
     <div style="padding: 30px">
-        <h1 style="margin: 0">0117測試剪裁工具</h1>
+        <h1 style="margin: 0">測試剪裁工具</h1>
 
         <!-- file input for capturing images -->
         <input type="file" accept="image/*" capture="camera" id="fileInput">
@@ -129,10 +129,10 @@
 
                 // 透過AJAX上傳至AI OCR的Rest API
                 $.ajax({
-                    url: "http://192.168.112.108:8022/api/form/TW-ID-gay4yOfi",
+                    url: "http://192.168.112.108:8022/api/form/TW-ID-gay4yOfi/requestToken",
                     type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify({ image: base64Image }),
+                    contentType: "multipart/form-data",
+                    body: form,
                     success: function (response) {
                         console.log("OCR Response:", response);
                         // 在這裡處理OCR的回應
