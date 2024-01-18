@@ -134,9 +134,10 @@
                 // 透過AJAX上傳至AI OCR的Rest API
                 $.ajax({
                     url: "http://192.168.112.108:8022/api/form/TW-ID-gay4yOfi/requestToken",
-                    type: "POST",
-                    contentType: "multipart/form-data",
+                    type: "POST",                    
                     data: formData,
+                    contentType: false, // 告訴 jQuery 不要設置 Content-Type，讓瀏覽器自動處理
+                    processData: false, // 告訴 jQuery 不要處理數據，讓 FormData 自行處理
                     success: function (response) {
                         console.log("OCR Response:", response);
                         // 在這裡處理OCR的回應
