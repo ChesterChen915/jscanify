@@ -123,16 +123,17 @@
             function requestToken() {
                 // 建立 FormData 物件
                 const formData = new FormData();
-                formData.append('apiPsw', "");
+                formData.append('apiPsw', "ctb");
 
                 // 透過 AJAX 向目的網址要求 token
                 $.ajax({
                     url: "http://192.168.112.108:8022/api/form/TW-ID-gay4yOfi/requestToken",
                     type: "POST",                    
-                    data: formData,
-                    contentType: false, // 告訴 jQuery 不要設置 Content-Type，讓瀏覽器自動處理
-                    processData: false, // 告訴 jQuery 不要處理數據，讓 FormData 自行處理
+                    data: formData.toString(),
+                    contentType: "application/x-www-form-urlencoded",
+                    processData: true,
                     success: function (response) {
+                        console.log(formData.toString());
                         console.log("Token Request Response:", response);
                         // 在這裡處理獲得的 token，例如將其存儲供之後使用
                     },
