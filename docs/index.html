@@ -117,9 +117,6 @@
 
                             // 要求token 的Rest API
                             requestToken();
-
-                            // 取得token後將token及圖片上傳
-                            uploadAndWait();
                         };
                     };
                     reader.readAsDataURL(file);
@@ -143,6 +140,9 @@
                         console.log("Token Request Response:", response);
                         authToken = response.token;
                         //console.log(authToken);
+
+                        // 取得token後將token及圖片上傳
+                        uploadAndWait();
                     },
                     error: function (error) {
                         console.error("Error requesting token:", error);
