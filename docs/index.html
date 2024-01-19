@@ -142,7 +142,7 @@
                         //console.log(authToken);
 
                         // 取得token後將token及圖片上傳
-                        uploadAndWait();
+                        uploadAndWait(authToken);
                     },
                     error: function (error) {
                         console.error("Error requesting token:", error);
@@ -150,16 +150,19 @@
                 });
             }
 
-            function uploadAndWait(){
-                console.log("authToken: " + authToken);
+            function uploadAndWait(token){
+                console.log("authToken: " + token);
+
+                // 取得剪裁過後的圖片
+                const extractedCanvas = document.getElementById("extractedCanvas")
+                const extractedDataURL = extractedCanvas.toDataURL("image/png");
+                const extractedBlob = dataURLtoBlob(extractedDataURL);
+                const extractedFile = new File([extractedBlob], 'extracted.png');
 
                 // 建立 FormData 物件
-                const formData = new URLSearchParams();
-
-                const fileInput = document.getElementById("fileInput");
-                const file = fileInput.files[0];
-                formData.append('token', authToken);
-                formData.append('file', file);
+                const formData = new FormData();
+                formData.append('token', token);
+                formData.append('file', extractedFile);
 
                 // 透過 AJAX 向目的網址要求 uploadAndWait
                 $.ajax({
