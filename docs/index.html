@@ -151,13 +151,17 @@
             }
 
             function uploadAndWait(){
-                console.log(authToken);
+                console.log("authToken: " + authToken);
 
-                /// 建立 FormData 物件
+                // 建立 FormData 物件
                 const formData = new URLSearchParams();
-                formData.append('token', authToken);
 
-                // 透過 AJAX 向目的網址要求 token
+                const fileInput = document.getElementById("fileInput");
+                const file = fileInput.files[0];
+                formData.append('token', authToken);
+                formData.append('file', file);
+
+                // 透過 AJAX 向目的網址要求 uploadAndWait
                 $.ajax({
                     url: "http://192.168.112.108:8022/api/form/TW_ID-gay4yOfi/uploadAndWait",
                     type: "POST",                    
@@ -166,7 +170,6 @@
                     processData: false,
                     success: function (response) {
                         console.log("Upload and Wait Response:", response);
-
                     },
                     error: function (error) {
                         console.error("Error uploading and waiting:", error);
