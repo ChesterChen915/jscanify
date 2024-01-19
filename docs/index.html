@@ -66,6 +66,9 @@
     <script>
         window.addEventListener("load", function () {
             const scanner = new jscanify();
+
+            let authToken;
+
             const paperWidth = 800;
             const paperHeight = 1000;
 
@@ -114,6 +117,9 @@
 
                             // 要求token 的Rest API
                             requestToken();
+
+                            // 取得token後將token及圖片上傳
+                            uploadAndWait();
                         };
                     };
                     reader.readAsDataURL(file);
@@ -135,6 +141,8 @@
                     success: function (response) {
                         //console.log(formData.toString());
                         console.log("Token Request Response:", response);
+                        authToken = response.token;
+                        //console.log(authToken);
                     },
                     error: function (error) {
                         console.error("Error requesting token:", error);
@@ -143,8 +151,27 @@
             }
 
             function uploadAndWait(){
-                /// 建立 FormData 物件
+                console.log(authToken);
 
+                /// 建立 FormData 物件
+                const formData = new URLSearchParams();
+                formData.append('token', authToken);
+
+                // 透過 AJAX 向目的網址要求 token
+                $.ajax({
+                    url: "http://192.168.112.108:8022/api/form/TW_ID-gay4yOfi/uploadAndWait",
+                    type: "POST",                    
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log("Upload and Wait Response:", response);
+
+                    },
+                    error: function (error) {
+                        console.error("Error uploading and waiting:", error);
+                    }
+                });
             }
         });
 
