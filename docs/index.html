@@ -34,7 +34,7 @@
 
 <body>
     <div style="padding: 30px">
-        <h1 style="margin: 0">0119new測試剪裁工具</h1>
+        <h1 style="margin: 0">0122測試剪裁工具</h1>
 
         <!-- file input for capturing images -->
         <input type="file" accept="image/*" capture="camera" id="fileInput">
@@ -68,6 +68,7 @@
             const scanner = new jscanify();
 
             let authToken;
+            let authTicket;
 
             const paperWidth = 800;
             const paperHeight = 1000;
@@ -151,7 +152,7 @@
             }
 
             function uploadAndWait(token){
-                console.log("authToken: " + token);
+                //console.log("authToken: " + token);
 
                 // 取得剪裁過後的圖片
                 const extractedCanvas = document.getElementById("extractedCanvas")
@@ -173,9 +174,65 @@
                     processData: false,
                     success: function (response) {
                         console.log("Upload and Wait Response:", response);
+                        authTicket = response.ticket;
+
+                        check(authToken, authTicket);
                     },
                     error: function (error) {
                         console.error("Error uploading and waiting:", error);
+                    }
+                });
+            }
+
+            function check(token, ticket){
+                //console.log("authToken: " + token);
+                //console.log("authTicket: " + ticket);
+
+                // 建立 FormData 物件
+                const formData = new FormData();
+                formData.append('token', token);
+                formData.append('ticket', ticket);
+
+                // 透過 AJAX 向目的網址要求 check
+                $.ajax({
+                    url: "http://192.168.112.108:8022/api/form/TW_ID-gay4yOfi/check",
+                    type: "POST",                    
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log("Check Response:", response);
+
+                        requestSourceImage(authToken, authTicket);
+                    },
+                    error: function (error) {
+                        console.error("Error checking:", error);
+                    }
+                });
+            }
+
+            function requestSourceImage(token, ticket){
+                console.log("authToken: " + token);
+                console.log("authTicket: " + ticket);
+
+                // 建立 FormData 物件
+                const formData = new FormData();
+                formData.append('token', token);
+                formData.append('ticket', ticket);
+                formData.append('page', '1');
+
+                // 透過 AJAX 向目的網址要求 requestSourceImag
+                $.ajax({
+                    url: "http://192.168.112.108:8022/api/form/TW_ID-gay4yOfi/requestSourceImage",
+                    type: "POST",                    
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log("RequestSourceImag Response:", response);
+                    },
+                    error: function (error) {
+                        console.error("Error RequestSourceImag:", error);
                     }
                 });
             }
