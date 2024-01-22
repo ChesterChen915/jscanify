@@ -34,7 +34,7 @@
 
 <body>
     <div style="padding: 30px">
-        <h1 style="margin: 0">0122測試剪裁工具</h1>
+        <h1 style="margin: 0">20240122測試剪裁工具</h1>
 
         <!-- file input for capturing images -->
         <input type="file" accept="image/*" capture="camera" id="fileInput">
@@ -152,7 +152,7 @@
             }
 
             function uploadAndWait(token){
-                //console.log("authToken: " + token);
+                console.log("authToken: " + token);
 
                 // 取得剪裁過後的圖片
                 const extractedCanvas = document.getElementById("extractedCanvas")
@@ -183,7 +183,7 @@
                     }
                 });
             }
-
+            /*
             function check(token, ticket){
                 //console.log("authToken: " + token);
                 //console.log("authTicket: " + ticket);
@@ -236,6 +236,7 @@
                     }
                 });
             }
+            */
         });
 
         // 下載已裁切且梯形修正圖片的方法
