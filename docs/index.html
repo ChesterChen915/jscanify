@@ -34,7 +34,7 @@
 
 <body>
     <div style="padding: 30px">
-        <h1 style="margin: 0">20240122測試剪裁工具</h1>
+        <h1 style="margin: 0">20240123測試剪裁工具</h1>
 
         <!-- file input for capturing images -->
         <input type="file" accept="image/*" capture="camera" id="fileInput">
@@ -176,7 +176,7 @@
                         console.log("Upload and Wait Response:", response);
                         authTicket = response.ticket;
 
-                        check(authToken, authTicket);
+                        //check(authToken, authTicket);
                     },
                     error: function (error) {
                         console.error("Error uploading and waiting:", error);
